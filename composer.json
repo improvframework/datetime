@@ -1,0 +1,41 @@
+{
+	"name" : "improvframework/http-constants" ,
+	"description": "HTTP-specific constants to be used in any libraries that rely on the HTTP Protocol.",
+	"type": "library",
+	"keywords": [
+		"improv",
+		"improvframework",
+        "php",
+        "http",
+        "constants",
+		"response",
+        "request",
+        "response codes",
+        "request methods"
+	],
+	"homepage": "https://github.com/improvframework/http-constants",
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Jim DeLois",
+			"email": "jim.delois@improvframework.org",
+			"homepage": "http://www.improvframework.org/"
+		}
+	],
+	"minimum-stability": "stable",
+	"require": {
+		"php": ">=5.6.0"
+    },
+	"require-dev" : {
+		"phpunit/phpunit": "~4.7.5",
+		"phing/phing": "~2.10.0",
+		"phpdocumentor/phpdocumentor": "~2.8.0",
+		"fiunchinho/phpunit-randomizer": "~2.0.0",
+		"php": ">=5.6.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Improv\\Http\\": "src"
+		}
+	}
+}
