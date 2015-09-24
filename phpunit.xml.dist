@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    colors="true"
+    forceCoversAnnotation="true"
+    verbose="true"
+>
+
+    <php>
+        <ini name="memory_limit" value="-1"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="All Tests">
+            <directory suffix=".php">tests</directory>
+        </testsuite>
+        <testsuite name="Unit Tests">
+            <directory suffix=".php">tests/unit</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <blacklist>
+            <directory>vendor</directory>
+            <!--<directory>tests</directory>-->
+        </blacklist>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="junit" target="build/reports/phpunit-log-junit.xml" />
+        <log type="tap" target="build/reports/phpunit-log-tap.tap" />
+        <log type="coverage-clover" target="build/reports/phpunit-coverage-clover.xml" />
+        <log type="coverage-html" target="build/reports/phpunit-coverage-html" title="Improv.ArgParse" />
+        <log type="coverage-text" target="build/reports/phpunit-coverage-text.txt" title="Improv.ArgParse" />
+    </logging>
+
+</phpunit>

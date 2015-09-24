@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		name="Improv Framework | DateTime"
+		basedir="."
+		default="build"
+		description="The primary build file for the DateTime Library by Improv Framework"
+		>
+
+
+	<property name="exec.php" value="/usr/bin/php" override="true" />
+	<property name="dir.build" value="build" />
+	<property name="dir.build.reports" value="${dir.build}/reports" />
+
+	<includepath classpath="./vendor/bin" />
+
+	<tstamp>
+		<format property="timestamp" pattern="%Y-%m-%d %H:%M" />
+	</tstamp>
+
+
+
+	<target name="static-analysis" depends="loc,cpd,pdepend,phpmd" />
+
+	<target name="test" depends="prepare,sniff,test-unit" />
+
+	<target name="build" depends="static-analysis,test,documentapi" />
+
+
+	<target name="clean">
+		<delete dir="${dir.build}" includeemptydirs="true" verbose="true" />
+	</target>
+
+
+
+
+	<target name="prepare" depends="clean" description="Prepares files and directories for build">
+		<mkdir dir="${dir.build}" />
+	</target>
+
+
+
+
+	<target name="lint">
+		<phplint deprecatedAsError="true" haltonfailure="true">
+			<fileset dir="src">
+				<include name="**/*.php"/>
+			</fileset>
+			<fileset dir="tests">
+				<include name="**/*.php"/>
+			</fileset>
+		</phplint>
+	</target>
+
+	<target name="sniff" depends="lint">
+
+		<mkdir dir="${dir.build.reports}" />
+
+		<phpcodesniffer
+				standard="PSR2"
+				docGenerator="HTML"
+				docFile="${dir.build.reports}/sniffs-guide.html"
+				verbosity="0"
+				haltonerror="true"
+				haltonwarning="true"
+				showSniffs="false"
+				showSources="true"
+				showWarnings="true"
+				>
+
+			<formatter type="full" outfile="${dir.build.reports}/sniffs-full.txt"/>
+			<formatter type="summary" outfile="${dir.build.reports}/sniffs-summary.txt"/>
+			<formatter type="checkstyle" outfile="${dir.build.reports}/sniffs-checkstyle.xml"/>
+
+			<formatter type="full" outfile="irrelevant-value" usefile="false"/>
+
+			<fileset dir="src">
+				<include name="**/*.php"/>
+			</fileset>
+			<fileset dir="tests">
+				<include name="**/*.php"/>
+			</fileset>
+
+		</phpcodesniffer>
+	</target>
+
+	<target name="loc" depends="sniff">
+
+		<mkdir dir="${dir.build.reports}" />
+
+		<property name="path.reports.loc" value="${dir.build.reports}/phploc-report.txt" />
+
+		<delete file="${path.reports.loc}" verbose="true" />
+
+		<phploc reportType="txt" reportDirectory="${dir.build.reports}" reportName="phploc-report">
+			<fileset dir="src">
+				<include name="**/*.php"/>
+			</fileset>
+		</phploc>
+
+		<exec
+				executable="cat"
+				checkreturn="false"
+				passthru="true">
+			<arg path="${path.reports.loc}" />
+		</exec>
+
+	</target>
+
+	<target name="cpd" depends="sniff">
+
+		<mkdir dir="${dir.build.reports}" />
+
+		<property name="path.reports.phpcpd.xml" value="${dir.build.reports}/phpcpd-report.xml" />
+		<property name="path.reports.phpcpd.txt" value="${dir.build.reports}/phpcpd-report.txt" />
+
+		<delete file="${path.reports.phpcpd.xml}" verbose="true" />
+		<delete file="${path.reports.phpcpd.txt}" verbose="true" />
+
+		<phpcpd>
+			<fileset dir="src">
+				<include name="**/*.php"/>
+			</fileset>
+			<formatter type="pmd" outfile="${path.reports.phpcpd.xml}"/>
+			<formatter type="default" outfile="${path.reports.phpcpd.txt}"/>
+			<formatter type="default" useFile="false" outfile="${path.reports.phpcpd.txt}"/>
+		</phpcpd>
+
+	</target>
+
+	<target name="pdepend">
+
+		<mkdir dir="${dir.build.reports}" />
+
+		<delete file="${dir.build.reports}/pdepend-chart.svg" verbose="true" />
+		<delete file="${dir.build.reports}/pdepend.xml" verbose="true" />
+		<delete file="${dir.build.reports}/pdepend-overview-pyramid.svg" verbose="true" />
+		<delete file="${dir.build.reports}/pdepend-phpunit.xml " verbose="true" />
+		<delete file="${dir.build.reports}/pdepend-summary.xml" verbose="true" />
+
+		<phpdepend>
+			<fileset dir="src">
+				<include name="**/*.php"/>
+			</fileset>
+
+			<!-- <analyzer type="coderank-mode" value="method"/> -->
+
+			<logger type="jdepend-xml" outfile="reports/jdepend.xml"/>
+			<logger type="jdepend-chart" outfile="${dir.build.reports}/pdepend-chart.svg" />
+			<logger type="jdepend-xml" outfile="${dir.build.reports}/pdepend.xml" />
+			<logger type="overview-pyramid" outfile="${dir.build.reports}/pdepend-overview-pyramid.svg" />
+			<logger type="summary-xml" outfile="${dir.build.reports}/pdepend-summary.xml" />
+
+		</phpdepend>
+
+	</target>
+
+
+	<target name="phpmd">
+
+		<mkdir dir="${dir.build.reports}" />
+
+		<delete file="${dir.build.reports}/phpmd.html" verbose="true"/>
+		<delete file="${dir.build.reports}/phpmd.xml" verbose="true"/>
+		<delete file="${dir.build.reports}/phpmd.txt" verbose="true"/>
+
+		<property name="phpmd.rulesets" value="cleancode,codesize,design,naming,unusedcode" />
+
+		<!-- We run this task to generate all the right reports... -->
+		<phpmd rulesets="${phpmd.rulesets}" minimumPriority="0">
+
+			<fileset dir="src">
+				<include name="**/*.php"/>
+			</fileset>
+			<fileset dir="tests">
+				<include name="**/*.php"/>
+			</fileset>
+
+			<formatter type="html" outfile="${dir.build.reports}/phpmd.html"/>
+			<formatter type="xml" outfile="${dir.build.reports}/phpmd.xml"/>
+			<formatter type="text" outfile="${dir.build.reports}/phpmd.txt"/>
+
+		</phpmd>
+
+		<!-- This is the only way to get output to the screen and to FAIL the build -->
+		<exec executable="./vendor/bin/phpmd" checkreturn="true" logoutput="true" passthru="true">
+			<arg path="src,tests" />
+			<arg value="text" />
+			<arg value="${phpmd.rulesets}" />
+		</exec>
+
+	</target>
+
+
+
+	<target name="documentapi">
+
+		<mkdir dir="${dir.build}/docs/api" />
+
+		<phpdoc2 title="API Documentation"
+				 destdir="${dir.build}/docs/api"
+				 template="clean">
+			<fileset dir="./src">
+				<include name="**/*.php" />
+			</fileset>
+		</phpdoc2>
+	</target>
+
+
+
+
+
+
+	<target name="test-unit" depends="lint">
+		<exec
+            executable="./vendor/bin/phpunit-randomizer"
+            dir="."
+            checkreturn="true"
+            passthru="true"
+		>
+			<!-- <arg value="- -testdox" /> -->
+		</exec>
+	</target>
+
+
+
+
+	<target name="package" depends="build">
+
+
+		<mkdir dir="${dir.build}/artifacts/src-package" />
+
+		<copy todir="${dir.build}/artifacts/src-package" >
+			<fileset dir=".">
+				<include name="src/**/*" />
+				<include name="tests/**/*" />
+			</fileset>
+			<filelist dir="." files="composer.json,LICENSE,README.md"/>
+		</copy>
+
+		<exec
+				executable="tar"
+				checkreturn="true"
+				dir="${dir.build}/artifacts"
+				>
+			<arg value="-cvzf" /><arg path="src-package.tar.gz" />
+			<arg path="src-package/" />
+		</exec>
+
+		<delete dir="${dir.build}/artifacts/src-package" includeemptydirs="true" verbose="true" />
+	</target>
+
+
+
+</project>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="datetime">
+   <description>The coding standard for the DateTime project</description>
+
+   <file>./src</file>
+   <file>./tests</file>
+
+   <arg name="report" value="full"/>
+   <arg name="report-width" value="auto"/>
+   <arg value="wp"/>
+   <arg name="colors"/>
+
+   <rule ref="PSR2"/>
+</ruleset>
