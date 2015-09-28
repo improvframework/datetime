@@ -1,0 +1,16 @@
+buildconfig:
+    path:
+        directory:  src
+        extensions: php
+    logging:
+        report:
+            html: ./build/reports/phpmetrics.html
+            xml:  ./build/reports/phpmetrics.xml
+            csv:  ./build/reports/phpmetrics.csv
+            json: ./build/reports/phpmetrics.json
+            cli:  1
+        violations:
+            xml:  ./build/reports/phpmetrics-violations.xml
+        chart:
+            bubbles: ./build/reports/phpmetrics-bubbles.svg
+    failure: average.maintainabilityIndex < 100

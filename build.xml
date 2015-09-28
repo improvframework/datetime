@@ -19,7 +19,7 @@
 
 
 
-	<target name="static-analysis" depends="loc,cpd,pdepend,phpmd" />
+	<target name="static-analysis" depends="loc,cpd,pdepend,phpmd,phpmetrics" />
 
 	<target name="test" depends="prepare,sniff,test-unit" />
 
@@ -71,7 +71,7 @@
 			<formatter type="summary" outfile="${dir.build.reports}/sniffs-summary.txt"/>
 			<formatter type="checkstyle" outfile="${dir.build.reports}/sniffs-checkstyle.xml"/>
 
-			<formatter type="full" outfile="irrelevant-value" usefile="false"/>
+			<formatter type="full" outfile="${dir.build.reports}/sniffs-full-console.txt" usefile="false"/>
 
 			<fileset dir="src">
 				<include name="**/*.php"/>
@@ -190,6 +190,16 @@
 
 	</target>
 
+	<target name="phpmetrics">
+
+		<mkdir dir="${dir.build.reports}" />
+
+		<exec executable="./vendor/bin/phpmetrics" checkreturn="true" logoutput="true" passthru="true">
+			<arg value="--config" />
+			<arg path="phpmetrics.yml.dist" />
+		</exec>
+
+	</target>
 
 
 	<target name="documentapi">
