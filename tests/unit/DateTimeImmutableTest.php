@@ -14,6 +14,15 @@ class DateTimeImmutableTest extends AbstractTestCase
     use PHPMock;
 
     /**
+     * @covers ::__construct
+     */
+    public function constructionInstanceOf()
+    {
+        $sut = new DateTimeImmutable();
+        $this->assertInstanceOf(\DateTimeImmutable::class, $sut);
+    }
+
+    /**
      * @test
      * @covers ::__construct
      */
@@ -36,6 +45,7 @@ class DateTimeImmutableTest extends AbstractTestCase
         $sut           = new DateTimeImmutable();
         $result_actual = $sut->format('Y-m-d H:i:s.u');
 
+        $this->assertInstanceOf(\DateTimeImmutable::class, $sut);
         $this->assertEquals($result_expected, $result_actual);
 
     }
