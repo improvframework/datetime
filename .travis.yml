@@ -15,7 +15,7 @@ install:
   composer install --no-interaction
 
 script:
-  php ./vendor/bin/phing static-analysis test
+  php ./vendor/bin/phing build
 
 after_success:
   php ./vendor/bin/coveralls -v

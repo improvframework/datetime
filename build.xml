@@ -19,11 +19,11 @@
 
 
 
-	<target name="static-analysis" depends="loc,cpd,pdepend,phpmd,phpmetrics" />
+	<target name="static-analysis" depends="sniff,loc,cpd,pdepend,phpmd,phpmetrics" />
 
-	<target name="test" depends="prepare,sniff,test-unit" />
+	<target name="test" depends="test-unit" />
 
-	<target name="build" depends="static-analysis,test,documentapi" />
+	<target name="build" depends="prepare,static-analysis,test,documentapi" />
 
 
 	<target name="clean">
@@ -35,6 +35,7 @@
 
 	<target name="prepare" depends="clean" description="Prepares files and directories for build">
 		<mkdir dir="${dir.build}" />
+		<mkdir dir="${dir.build.reports}" />
 	</target>
 
 
@@ -52,8 +53,6 @@
 	</target>
 
 	<target name="sniff" depends="lint">
-
-		<mkdir dir="${dir.build.reports}" />
 
 		<phpcodesniffer
 				standard="PSR2"
@@ -85,8 +84,6 @@
 
 	<target name="loc" depends="sniff">
 
-		<mkdir dir="${dir.build.reports}" />
-
 		<property name="path.reports.loc" value="${dir.build.reports}/phploc-report.txt" />
 
 		<delete file="${path.reports.loc}" verbose="true" />
@@ -108,8 +105,6 @@
 
 	<target name="cpd" depends="sniff">
 
-		<mkdir dir="${dir.build.reports}" />
-
 		<property name="path.reports.phpcpd.xml" value="${dir.build.reports}/phpcpd-report.xml" />
 		<property name="path.reports.phpcpd.txt" value="${dir.build.reports}/phpcpd-report.txt" />
 
@@ -128,8 +123,6 @@
 	</target>
 
 	<target name="pdepend">
-
-		<mkdir dir="${dir.build.reports}" />
 
 		<delete file="${dir.build.reports}/pdepend-chart.svg" verbose="true" />
 		<delete file="${dir.build.reports}/pdepend.xml" verbose="true" />
@@ -156,8 +149,6 @@
 
 
 	<target name="phpmd">
-
-		<mkdir dir="${dir.build.reports}" />
 
 		<delete file="${dir.build.reports}/phpmd.html" verbose="true"/>
 		<delete file="${dir.build.reports}/phpmd.xml" verbose="true"/>
@@ -191,8 +182,6 @@
 	</target>
 
 	<target name="phpmetrics">
-
-		<mkdir dir="${dir.build.reports}" />
 
 		<exec executable="./vendor/bin/phpmetrics" checkreturn="true" logoutput="true" passthru="true">
 			<arg value="--config" />
